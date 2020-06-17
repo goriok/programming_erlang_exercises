@@ -1,5 +1,5 @@
 -module(afile_client). 
--export([ls/1, get_file/2]). 
+-export([ls/1, get_file/2, put_file/3]). 
 ls(Server) ->  
   Server ! {self(), list_dir},
   receive 
@@ -11,4 +11,11 @@ get_file(Server, File) ->
   receive
     {Server, Content} -> 
       Content
+  end. 
+put_file(Server, Filename, Path) ->
+  { ok, File } = file:read_file(Path),
+  Server ! {self(), {put_file, Filename, File}},
+  receive
+    {Server, ok} ->
+      ok
   end. 
